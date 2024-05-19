@@ -5,7 +5,7 @@ import java.lang.*;
 import java.util.ArrayList;
 
 public class GameWindow extends Frame implements KeyListener, Runnable {
-    public static final int pixelScale = 2;
+    public static final int pixelScale = 3;
     public static final int topPadding = 30;
     static boolean[] pressedKeys = new boolean[256];
     static Vector2 viewportPosition = new Vector2();
@@ -20,7 +20,7 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
     public GameWindow()
     {
         setVisible(true);
-        setSize(800, 600);
+        setSize(1920, 1080);
         setTitle("game");
         setResizable(false);
         addWindowListener(new WindowAdapter() {

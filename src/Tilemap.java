@@ -70,10 +70,12 @@ public class Tilemap extends GameRenderer {
                         x0 + (origin.getX() - x) / tileSize,
                         y0 + (origin.getY() - y) / tileSize
                 );
-                if((int)tilePos.getX() < 0 || (int)tilePos.getX() >= gridWidth || (int)tilePos.getY() < 0 || (int)tilePos.getY() >= gridHeight) continue;
-                Tile t = grid[(int)tilePos.getX()][(int)tilePos.getY()];
+                int ix = (int)Math.floor(tilePos.getX());
+                int iy = (int)Math.floor(tilePos.getY());
+                if(ix < 0 || ix >= gridWidth || iy < 0 || iy >= gridHeight) continue;
+                Tile t = grid[ix][iy];
                 if(t == null) continue;
-                g.drawImage(t.image,(int)(x0*tileSize + ((float)x%tileSize)),(int)(y0*tileSize + ((float)y%tileSize)),tileSize,tileSize,null);
+                g.drawImage(t.image,(int)(x0 * tileSize - (tilePos.getX()*tileSize)%tileSize),(int)(y0 * tileSize - (tilePos.getY()*tileSize)%tileSize),tileSize,tileSize,null);
             }
         }
     }

@@ -5,12 +5,11 @@ import java.lang.*;
 import java.util.ArrayList;
 
 public class GameWindow extends Frame implements KeyListener, Runnable {
-    public static final int pixelScale = 3;
+    public static final int pixelScale = 2;
     public static final int topPadding = 30;
     static boolean[] pressedKeys = new boolean[256];
     static Vector2 viewportPosition = new Vector2();
-    TestRenderer t;
-    int n = 0;
+    static Vector2 lightPosition = new Vector2();
     BufferedImage canvasImage;
     Graphics2D g2d;
     Tilemap tilemap;
@@ -20,7 +19,7 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
     public GameWindow()
     {
         setVisible(true);
-        setSize(1920, 1080);
+        setSize(1280, 720);
         setTitle("game");
         setResizable(false);
         addWindowListener(new WindowAdapter() {
@@ -32,16 +31,9 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
         addKeyListener(this);
         canvasImage = new BufferedImage(getWidth()/pixelScale,(getHeight()-topPadding)/pixelScale,BufferedImage.TYPE_INT_ARGB);
         g2d = canvasImage.createGraphics();
-
-        t = new TestRenderer(0xff0000);
-        tilemap = new Tilemap(20,20);
-        for(int x = 0; x < 20; x++)
-        {
-            for(int y = 0; y < 20; y++)
-            {
-                tilemap.setTile(x,y,(int)(Math.random()*2));
-            }
-        }
+        tilemap = new Tilemap(80,80);
+        DungeonBuilder b = new DungeonBuilder();
+        b.build(tilemap);
 
         activeEntities.add(new PlayerEntity());
 
@@ -53,6 +45,14 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
     public int getPixelHeight()
     {
         return getHeight() / pixelScale;
+    }
+
+    public static Vector2 getLightPosition() {
+        return lightPosition;
+    }
+
+    public static void setLightPosition(Vector2 lightPosition) {
+        GameWindow.lightPosition = lightPosition;
     }
 
     public static boolean getPressedKey(int index)

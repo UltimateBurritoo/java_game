@@ -8,12 +8,17 @@ class Tile
     public static final Tile[] tileset = new Tile[]
     {
             new Tile("tile_bricks",false),
-            new Tile("wall_bricks",false)
+            new Tile("wall_bricks",true),
+            new Tile("wall_inside",true),
     };
     public Tile(String sprite, boolean canCollide)
     {
         image = AssetLoader.getSprite(sprite);
         collision = canCollide;
+    }
+
+    public boolean hasCollision() {
+        return collision;
     }
 }
 
@@ -45,7 +50,10 @@ public class Tilemap extends GameRenderer {
             }
         }
     }
-
+    public boolean isInside(int x, int y)
+    {
+        return (x >= 0 && x < gridWidth && y >= 0 && y < gridHeight);
+    }
     public void setTile(int x, int y, int index)
     {
         try
@@ -57,6 +65,33 @@ public class Tilemap extends GameRenderer {
             System.out.println("failed to place tile "+ index +" at " + x + ", " + y);
         }
     }
+    public void setTile(int x, int y, Tile tile)
+    {
+        try
+        {
+            grid[x][y] = tile;
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            System.out.println("failed to place tile at " + x + ", " + y);
+        }
+    }
+
+    public Tile getTile(int x, int y)
+    {
+        if(!isInside(x,y)) return null;
+        return grid[x][y];
+
+    }
+
+    public boolean checkCollision(Vector2 position)
+    {
+        int ix = (int)(position.getX() / 16.0);
+        int iy = (int)(position.getY() / 16.0);
+        if(!isInside(ix,iy)) return true;
+        if(grid[ix][iy] == null) return true;
+        return grid[ix][iy].hasCollision();
+    }
 
     public void render(int x, int y, Graphics2D g) {
         int tilesX = Game.getWindow().getPixelWidth() / tileSize + 1;
@@ -65,6 +100,7 @@ public class Tilemap extends GameRenderer {
         {
             for(int y0 = 0; y0 < tilesY; y0++)
             {
+
                 // continuous tile coords
                 Vector2 tilePos = new Vector2(
                         x0 + (origin.getX() - x) / tileSize,
@@ -72,10 +108,12 @@ public class Tilemap extends GameRenderer {
                 );
                 int ix = (int)Math.floor(tilePos.getX());
                 int iy = (int)Math.floor(tilePos.getY());
-                if(ix < 0 || ix >= gridWidth || iy < 0 || iy >= gridHeight) continue;
+                if(!isInside(ix,iy)) continue;
                 Tile t = grid[ix][iy];
                 if(t == null) continue;
                 g.drawImage(t.image,(int)(x0 * tileSize - (tilePos.getX()*tileSize)%tileSize),(int)(y0 * tileSize - (tilePos.getY()*tileSize)%tileSize),tileSize,tileSize,null);
+                g.setColor(new Color(0,0,0,1-GameRenderer.calculateLighting(tilePos.multiplied(tileSize))));
+                g.fillRect((int)(x0 * tileSize - (tilePos.getX()*tileSize)%tileSize),(int)(y0 * tileSize - (tilePos.getY()*tileSize)%tileSize),tileSize,tileSize);
             }
         }
     }

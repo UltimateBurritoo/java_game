@@ -1,26 +1,23 @@
-public class PlayerEntity extends EntityBase{
-    // temporary until adding entity stats
-    float speed = 150;
+public class PlayerEntity extends LivingEntity{
 
     public PlayerEntity()
     {
-        super(new Vector2(200,200),new Vector2(12,12),new SpritesheetRenderer("player",10,1,new SpriteAnimation[]{
+        super(new Vector2(160,160),new Vector2(12,12),new SpritesheetRenderer("player",10,1,new SpriteAnimation[]{
                 new SpriteAnimation(0,0,24,true), // idle front,
                 new SpriteAnimation(1,1,24,true), // idle back
                 new SpriteAnimation(2,6,12,true), // walk front
                 new SpriteAnimation(6,10,12,true) // walk back
-        }));
-        friction = 1200;
+        }),new EntityAttributes(100,175,20));
     }
     boolean faceBack = false;
     public void tick(float dt) {
         super.tick(dt);
         Vector2 v = new Vector2();
-        if(GameWindow.getPressedKey(Keybinds.KEY_LEFT)) v.setX(-1);
-        if(GameWindow.getPressedKey(Keybinds.KEY_RIGHT)) v.setX(1);
-        if(GameWindow.getPressedKey(Keybinds.KEY_UP)) v.setY(-1);
-        if(GameWindow.getPressedKey(Keybinds.KEY_DOWN)) v.setY(1);
-        if(!v.isZero()) setVelocity(v.normalized().multiplied(speed));
+        if(GameWindow.getPressedKey(Keybinds.KEY_A)) v.setX(-1);
+        if(GameWindow.getPressedKey(Keybinds.KEY_D)) v.setX(1);
+        if(GameWindow.getPressedKey(Keybinds.KEY_W)) v.setY(-1);
+        if(GameWindow.getPressedKey(Keybinds.KEY_S)) v.setY(1);
+        if(!v.isZero()) setVelocity(v.normalized().multiplied(getAttributes().getSpeed()));
 
         if(v.getX() != 0) spritesheet.setFlipped(v.getX() < 0);
         if(v.getY() < 0) faceBack = true;
@@ -30,5 +27,17 @@ public class PlayerEntity extends EntityBase{
         GameWindow.setLightPosition(position);
         GameWindow.viewportPosition.lerp(position.subtracted(new Vector2((float)Game.window.getPixelWidth()/2.0f,(float)Game.window.getPixelHeight()/2.0f)),5.0f*dt);
 
+    }
+    public void click(int button, Vector2 position)
+    {
+        if(button == 1)
+        {
+            System.out.println(position);
+        }
+    }
+    public void kill()
+    {
+        // when you die you are dead
+        GameWindow.gameOver = true;
     }
 }

@@ -1,12 +1,14 @@
 import java.awt.*;
+import java.util.ArrayList;
 
 public abstract class EntityBase {
     Vector2 position;
     Vector2 velocity;
-    float friction = 1000;
+    float friction = 1900;
     GameRenderer renderer;
     AABB collider;
     SpritesheetRenderer spritesheet;
+    boolean tilemapCollision = true;
 
     public Vector2 getPosition() {
         return position;
@@ -46,6 +48,16 @@ public abstract class EntityBase {
         //collider.debugDraw((int)-GameWindow.getViewportPosition().getX(),(int)-GameWindow.getViewportPosition().getY(),g2d);
     }
 
+    public EntityBase[] getTouching()
+    {
+        ArrayList<EntityBase> entities = new ArrayList<EntityBase>();
+        for (EntityBase e : GameWindow.activeEntities)
+        {
+            if(e == this || e.getPosition().distanceSquared(getPosition()) >= Math.pow(Math.max(collider.getSize().getX(),collider.getSize().getY()),2.0)) continue;
+            if(e.getCollider().isColliding(collider)) entities.add(e);
+        }
+        return entities.toArray(new EntityBase[]{});
+    }
 
     public EntityBase(Vector2 position)
     {
@@ -55,7 +67,7 @@ public abstract class EntityBase {
     public EntityBase(Vector2 position, GameRenderer r)
     {
         this.position = position;
-        this.velocity = Vector2.zero;
+        this.velocity = new Vector2(0,0);
         this.collider = new AABB(position,new Vector2(16,16));
         renderer = r;
         if(r.getClass() == SpritesheetRenderer.class)
@@ -76,8 +88,9 @@ public abstract class EntityBase {
     }
     public void tick(float dt)
     {
+        if(GameWindow.isGameOver()) return; // Do nothing if the player is dead
         Vector2 motion = this.velocity.multiplied(dt);
-        if(collider.moved(motion).collideTilemap(Game.getWindow().tilemap))
+        if(tilemapCollision && collider.moved(motion).collideTilemap(Game.getWindow().tilemap))
         {
             velocity.set(Vector2.zero);
         }
@@ -91,5 +104,9 @@ public abstract class EntityBase {
         {
             spritesheet.tick(dt);
         }
+    }
+    public void kill()
+    {
+        GameWindow.activeEntities.remove(this);
     }
 }

@@ -4,9 +4,12 @@ import java.awt.image.BufferedImage;
 import java.lang.*;
 import java.util.ArrayList;
 
-public class GameWindow extends Frame implements KeyListener, Runnable {
+public class GameWindow extends Frame implements KeyListener, MouseListener, Runnable {
+    public static final int pixelWidth = 640;
+    public static final int pixelHeight = 360;
     public static final int pixelScale = 2;
     public static final int topPadding = 30;
+    static boolean gameOver;
     static boolean[] pressedKeys = new boolean[256];
     static Vector2 viewportPosition = new Vector2();
     static Vector2 lightPosition = new Vector2();
@@ -14,8 +17,10 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
     Graphics2D g2d;
     Tilemap tilemap;
 
-    ArrayList<EntityBase> activeEntities = new ArrayList<EntityBase>();
+    public static ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
 
+    public static ArrayList<EntityBase> activeEntities = new ArrayList<EntityBase>();
+    PlayerEntity player;
     public GameWindow()
     {
         setVisible(true);
@@ -29,13 +34,15 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
             }
         });
         addKeyListener(this);
+        addMouseListener(this);
         canvasImage = new BufferedImage(getWidth()/pixelScale,(getHeight()-topPadding)/pixelScale,BufferedImage.TYPE_INT_ARGB);
         g2d = canvasImage.createGraphics();
-        tilemap = new Tilemap(80,80);
+        tilemap = new Tilemap(100,100);
         DungeonBuilder b = new DungeonBuilder();
         b.build(tilemap);
-
-        activeEntities.add(new PlayerEntity());
+        player = new PlayerEntity();
+        activeEntities.add(player);
+        uiElements.add(new PlayerHUD(player));
 
     }
     public int getPixelWidth()
@@ -46,13 +53,24 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
     {
         return getHeight() / pixelScale;
     }
-
+    public PlayerEntity getPlayer()
+    {
+        return player;
+    }
     public static Vector2 getLightPosition() {
         return lightPosition;
     }
 
     public static void setLightPosition(Vector2 lightPosition) {
         GameWindow.lightPosition = lightPosition;
+    }
+
+    public static boolean isGameOver() {
+        return gameOver;
+    }
+
+    public static void setGameOver(boolean gameOver) {
+        GameWindow.gameOver = gameOver;
     }
 
     public static boolean getPressedKey(int index)
@@ -66,6 +84,16 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
 
     public static void setViewportPosition(Vector2 viewportPosition) {
         GameWindow.viewportPosition = viewportPosition;
+    }
+    Vector2 lastMousePos = Vector2.zero;
+    public Vector2 getMousePos()
+    {
+        if (getMousePosition() == null) {
+            return lastMousePos;
+        }
+        else if (lastMousePos == null) return Vector2.zero;
+        lastMousePos = new Vector2((float)getMousePosition().getX(),(float)getMousePosition().getY());
+        return lastMousePos;
     }
 
     // we don't care about this method
@@ -85,8 +113,18 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
         pressedKeys[e.getKeyCode()] = false;
         //System.out.println(e.getKeyCode() + " up");
     }
-
-    // TODO add spawn entity method and spawn player
+    public void mouseClicked(MouseEvent e)
+    {return;}
+    public void mousePressed(MouseEvent e)
+    {
+        getPlayer().click(e.getButton(),getViewportPosition().added(e.getX(),e.getY()));
+    }
+    public void mouseReleased(MouseEvent e)
+    {return;}
+    public void mouseEntered(MouseEvent e)
+    {return;}
+    public void mouseExited(MouseEvent e)
+    {return;}
 
     long previousTime = System.currentTimeMillis();
     int fps;
@@ -119,6 +157,10 @@ public class GameWindow extends Frame implements KeyListener, Runnable {
         for(EntityBase entity : activeEntities)
         {
             entity.render(g2d);
+        }
+        for(UIElement element : uiElements)
+        {
+            element.render(0,0,g2d);
         }
         g2d.setColor(Color.white);
         g2d.drawString(fps + " fps", 2,10);

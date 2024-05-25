@@ -21,6 +21,11 @@ public class Vector2 {
         this.y = y;
     }
 
+    public Vector2 copy()
+    {
+        return new Vector2(x,y);
+    }
+
     public float getX() {
         return x;
     }
@@ -182,6 +187,11 @@ public class Vector2 {
         return (float)Math.sqrt(Math.pow(other.getX()-x,2.0)+Math.pow(other.getY()-y,2.0));
     }
 
+    public float distanceSquared(Vector2 other)
+    {
+        return (float)(Math.pow(other.getX()-x,2.0)+Math.pow(other.getY()-y,2.0));
+    }
+
     public void moveTowards(Vector2 other,float delta)
     {
         float dist = distance(other);
@@ -207,6 +217,19 @@ public class Vector2 {
     public Vector2 lerped(Vector2 other, float delta)
     {
         return new Vector2((other.getX() - this.x) * Math.clamp(delta,0f,1f) + this.x,(other.getY() - this.y) * Math.clamp(delta,0f,1f) + this.y);
+    }
+
+    public void capMagnitude(float max)
+    {
+        float m = magnitude();
+        normalize();
+        multiply(Math.min(m,max));
+    }
+
+    public Vector2 cappedMagnitude(float max)
+    {
+        float m = magnitude();
+        return normalized().multiplied(Math.min(m,max));
     }
 
     public boolean isZero()

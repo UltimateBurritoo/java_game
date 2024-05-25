@@ -1,11 +1,17 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class DungeonBuilder {
     int roomSize = 20;
     int maxRoomCount = 5;
-    int maxDungeonSize = 4;
+    int maxDungeonSize = 5;
     int floorTile = 0;
     int wallTile = 1;
     int insideTile = 2;
-
+    int wallThickness = 3;
+    int hallLength = 11;
+    int hallWidth = 4;
+    boolean[][] placedRooms;
     public void setTileTypes(int floor, int wall, int inside)
     {
         floorTile = floor;
@@ -14,71 +20,105 @@ public class DungeonBuilder {
     }
     public void build(Tilemap t)
     {
-        buildPropagation(0,0,t,(byte)0);
+        placedRooms = new boolean[maxDungeonSize][maxDungeonSize];
+        recursiveBuild(0,0,t,0);
     }
-    public void buildPropagation(int x, int y, Tilemap t, byte direction)
+    public void recursiveBuild(int x, int y, Tilemap t,int direction)
     {
-        byte neighbors = buildRoom(x,y,t,direction);
-        if((neighbors & 1) > 0) buildPropagation(x,y-1,t,(byte)2);
-        if((neighbors & 2) > 0) buildPropagation(x,y+1,t,(byte)1);
-        if((neighbors & 4) > 0) buildPropagation(x-1,y,t,(byte)8);
-        if((neighbors & 8) > 0) buildPropagation(x+1,y,t,(byte)4);
-    }
-    public byte buildRoom(int x, int y, Tilemap t, byte direction)
-    {
-        byte placeableRooms = 0;
-        int totalRooms = 0;
-        if(t.getTile(x*roomSize,y*roomSize-1) == null && t.isInside(x*roomSize,y*roomSize-1) && (Math.random() < 0.5 && totalRooms < 3)) placeableRooms += 1; // top
-        if(t.getTile(x*roomSize,y*roomSize+roomSize+1) == null && t.isInside(x*roomSize,y*roomSize+roomSize) && (Math.random() < 0.5 && totalRooms < 3)) placeableRooms += 2; // bottom
-        if(t.getTile(x*roomSize-1,y*roomSize) == null && t.isInside(x*roomSize-1,y*roomSize) && (Math.random() < 0.5 && totalRooms < 3)) placeableRooms += 4; // left
-        if(t.getTile(x*roomSize+roomSize+1,y*roomSize) == null && t.isInside(x*roomSize+roomSize,y*roomSize) && (Math.random() < 0.5 && totalRooms < 3)) placeableRooms += 8; // right
-        placeableRooms |= direction;
-        for(int x0 = x*roomSize; x0 <= x*roomSize+roomSize; x0++)
+        buildRoom(x,y,t,direction);
+        ArrayList<Integer> directions = new ArrayList<>();
+        if(insideDungeon(x,y-1) && !placedRooms[x][y-1]) directions.add(1);
+        if(insideDungeon(x,y+1) && !placedRooms[x][y+1]) directions.add(2);
+        if(insideDungeon(x-1,y) && !placedRooms[x-1][y]) directions.add(3);
+        if(insideDungeon(x+1,y) && !placedRooms[x+1][y]) directions.add(4);
+        if(directions.size() > 0)
         {
-            for (int y0 = y *roomSize; y0 <= y*roomSize+roomSize; y0++) {
-                if(x0 == x*roomSize || x0 == x*roomSize+roomSize || y0 == y*roomSize || y0 == y*roomSize+roomSize)
+            int selectedDirection = directions.get((int)(Math.random() * directions.size()));
+            cutHallway(x,y,t,selectedDirection);
+            detail(x,y,t);
+            if (selectedDirection==1)recursiveBuild(x,y-1,t,selectedDirection);
+            else if (selectedDirection==2)recursiveBuild(x,y+1,t,selectedDirection);
+            else if (selectedDirection==3)recursiveBuild(x-1,y,t,selectedDirection);
+            else if (selectedDirection==4)recursiveBuild(x+1,y,t,selectedDirection);
+        }
+        else
+        {
+            detail(x,y,t);
+            return;
+        }
+    }
+    boolean insideDungeon(int x, int y)
+    {
+        return x >= 0 && y >= 0 && x < maxDungeonSize && y < maxDungeonSize;
+    }
+    public void cutHallway(int x, int y, Tilemap t, int direction)
+    {
+        if (direction == 1)
+        {
+            for (int d = 0; d < hallLength; d++)
+            {
+                for (int w = -hallWidth/2; w < hallWidth/2; w++)
                 {
-                    t.setTile(x0,y0,insideTile);
+                    t.setTile(x*roomSize + roomSize/2 + w,y*roomSize + d,floorTile);
                 }
-                else if(x0 == x*roomSize || x0 == x*roomSize+roomSize || (y0-1) == y*roomSize || (y0-1) == y*roomSize+roomSize)
+            }
+        } else if (direction == 2) {
+            for (int d = 0; d < hallLength; d++)
+            {
+                for (int w = -hallWidth/2; w < hallWidth/2; w++)
                 {
-                    t.setTile(x0,y0,wallTile);
+                    t.setTile(x*roomSize + roomSize/2 + w,y*roomSize + roomSize - 1 - d,floorTile);
+                }
+            }
+        }else if (direction == 3) {
+            for (int d = 0; d < hallLength; d++) {
+                for (int w = -hallWidth / 2; w < hallWidth / 2; w++) {
+                    t.setTile(x * roomSize + d, y * roomSize + roomSize / 2 + w, floorTile);
+                }
+            }
+        }else if (direction == 4) {
+            for (int d = 0; d < hallLength; d++)
+            {
+                for (int w = -hallWidth/2; w < hallWidth/2; w++)
+                {
+                    t.setTile(x*roomSize + roomSize - 1 - d,y*roomSize + roomSize/2 + w,floorTile);
+                }
+            }
+        }
+
+    }
+    // 0 = no direction
+    // 1 = up
+    // 2 = down
+    // 3 = left
+    // 4 = right
+    public void buildRoom(int x, int y, Tilemap t, int startDirection)
+    {
+        if(!insideDungeon(x,y))return;
+        boolean narrowRoom = Math.random() < 0.25;
+        placedRooms[x][y] = true;
+        for(int x0 = 0; x0 < roomSize; x0++)
+        {
+            for (int y0 = 0; y0 < roomSize; y0++) {
+                if(x0 >= wallThickness && y0 >= wallThickness && x0 < roomSize-wallThickness && y0 < roomSize-wallThickness && !narrowRoom)
+                {
+                    t.setTile(x*roomSize+x0,y*roomSize+y0,floorTile);
                 }
                 else
                 {
-                    t.setTile(x0,y0,floorTile);
+                    t.setTile(x*roomSize+x0,y*roomSize+y0,insideTile);
                 }
             }
         }
-        if((placeableRooms & 1) > 0)
-        {
-            for(int x1 = roomSize/2-2; x1 < roomSize/2+2; x1++)
-            {
-                t.setTile(x*roomSize+x1,y*roomSize,floorTile);
-                t.setTile(x*roomSize+x1,y*roomSize+1,floorTile);
+
+        cutHallway(x,y,t,startDirection+(startDirection%2)*2-1);
+    }
+    public void detail(int x, int y, Tilemap t)
+    {
+        for (int x0 = 0; x0 < roomSize; x0++) {
+            for (int y0 = 0; y0 < roomSize; y0++) {
+                if(t.getTile(x*roomSize+x0,y*roomSize+y0) == Tile.tileset[insideTile] && t.getTile(x*roomSize+x0,y*roomSize+y0+1) == Tile.tileset[floorTile]) t.setTile(x*roomSize+x0,y*roomSize+y0,wallTile);
             }
         }
-        if((placeableRooms & 2) > 0)
-        {
-            for(int x1 = roomSize/2-2; x1 < roomSize/2+2; x1++)
-            {
-                t.setTile(x*roomSize+x1,y*roomSize+roomSize-1,floorTile);
-            }
-        }
-        if((placeableRooms & 4) > 0)
-        {
-            for(int y1 = roomSize/2-2; y1 < roomSize/2+2; y1++)
-            {
-                t.setTile(x*roomSize,y*roomSize+y1,floorTile);
-            }
-        }
-        if((placeableRooms & 8) > 0)
-        {
-            for(int y1 = roomSize/2-2; y1 < roomSize/2+2; y1++)
-            {
-                t.setTile(x*roomSize+roomSize-1,y*roomSize+y1,floorTile);
-            }
-        }
-        return (byte)(placeableRooms & ~direction);
     }
 }

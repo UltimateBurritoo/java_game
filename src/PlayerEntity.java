@@ -1,5 +1,6 @@
 public class PlayerEntity extends LivingEntity{
 
+    public static final float invinciblityTime = 0.5f;
     public PlayerEntity()
     {
         super(new Vector2(160,160),new Vector2(12,12),new SpritesheetRenderer("player",10,1,new SpriteAnimation[]{
@@ -27,6 +28,11 @@ public class PlayerEntity extends LivingEntity{
         GameWindow.setLightPosition(position);
         GameWindow.viewportPosition.lerp(position.subtracted(new Vector2((float)Game.window.getPixelWidth()/2.0f,(float)Game.window.getPixelHeight()/2.0f)),5.0f*dt);
 
+    }
+    public void damage(float hp)
+    {
+        super.damage(hp);
+        iFrames = invinciblityTime;
     }
     public void click(int button, Vector2 position)
     {

@@ -20,6 +20,8 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     public static ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
 
     public static ArrayList<EntityBase> activeEntities = new ArrayList<EntityBase>();
+    static ArrayList<EntityBase> killQueue = new ArrayList<EntityBase>();
+    static ArrayList<EntityBase> spawnQueue = new ArrayList<EntityBase>();
     PlayerEntity player;
     public GameWindow()
     {
@@ -125,6 +127,14 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     {return;}
     public void mouseExited(MouseEvent e)
     {return;}
+    public static void queueKill(EntityBase e)
+    {
+        killQueue.add(e);
+    }
+    public static void queueSpawn(EntityBase e)
+    {
+        spawnQueue.add(e);
+    }
 
     long previousTime = System.currentTimeMillis();
     int fps;
@@ -171,6 +181,19 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
 
     public void tick(float dt)
     {
+        for (EntityBase toKill : killQueue)
+        {
+            if(activeEntities.contains(toKill))
+            {
+                activeEntities.remove(toKill);
+            }
+        }
+        killQueue.clear();
+        for (EntityBase toSpawn : spawnQueue)
+        {
+            activeEntities.add(toSpawn);
+        }
+        spawnQueue.clear();
         for (EntityBase entity : activeEntities)
         {
             entity.tick(dt);

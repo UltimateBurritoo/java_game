@@ -9,7 +9,7 @@ public class GhostEntity extends LivingEntity{
                 new SpriteAnimation(0,3,8, true),
                 new SpriteAnimation(4,5, 4, true)
         }), new EntityAttributes(80,150, 14));
-        getAttributes().setKnockback(40);
+        getAttributes().setKnockback(120);
         tilemapCollision = false;
         friction = 0;
         circlingSpeed = (float)Math.random();

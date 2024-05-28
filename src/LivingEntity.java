@@ -6,8 +6,8 @@ public class LivingEntity extends EntityBase{
     public static final BufferedImage shadow = AssetLoader.getSprite("player_shadow");
     EntityAttributes attributes;
     float currentHP;
-    int iFrames;
-    public static final int invincibilityFrames = 8;
+    float iFrames;
+    public static final float invincibilityTime = 0.25f;
     public LivingEntity(Vector2 position, Vector2 size, GameRenderer r,EntityAttributes attributes)
     {
         super(position,size,r);
@@ -32,7 +32,7 @@ public class LivingEntity extends EntityBase{
         }
     }
 
-    public int getiFrames() {
+    public float getiFrames() {
         return iFrames;
     }
 
@@ -43,7 +43,7 @@ public class LivingEntity extends EntityBase{
         {
             kill();
         }
-        iFrames--;
+        iFrames-=dt;
         iFrames = Math.max(iFrames,0);
     }
 
@@ -64,7 +64,7 @@ public class LivingEntity extends EntityBase{
         if(GameWindow.isGameOver()) return;
         if(iFrames != 0) return;
         this.currentHP -= hp;
-        iFrames = invincibilityFrames;
+        iFrames = invincibilityTime;
     }
 
     public void knockback(Vector2 kb)

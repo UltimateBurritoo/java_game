@@ -12,6 +12,7 @@ public class SpritesheetRenderer extends GameRenderer{
     float currentTime;
     int animationIndex;
     boolean flipped;
+    boolean centered;
     SpriteAnimation[] animations;
 
     public SpritesheetRenderer(String sprite,int width, int height, SpriteAnimation[] animations)
@@ -40,6 +41,7 @@ public class SpritesheetRenderer extends GameRenderer{
             g.translate(frameWidth,0);
             g.scale(-1,1);
         }
+        if(centered) g.translate(-frameWidth/2,frameHeight/2);
         g.drawImage(image,0,0,frameWidth-1,frameHeight-1,fx*frameWidth,fy*frameHeight,(fx+1)*frameWidth-1,(fy+1)*frameHeight-1,null);
         g.setTransform(new AffineTransform());
     }

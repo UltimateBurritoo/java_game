@@ -26,7 +26,7 @@ public class PlayerHUD extends UIElement{
             g.drawImage(AssetLoader.getSprite("inventory_slot"),5+i*18,48,null);
         }
 
-        g.setColor(new Color(1,0,0,0.3f*((float)player.getiFrames() / LivingEntity.invincibilityFrames)));
+        g.setColor(new Color(1,0,0,0.3f*((float)player.getiFrames() / PlayerEntity.invincibilityTime)));
         g.fillRect(0,0,GameWindow.pixelWidth,GameWindow.pixelHeight);
     }
 }

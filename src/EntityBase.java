@@ -107,6 +107,6 @@ public abstract class EntityBase {
     }
     public void kill()
     {
-        GameWindow.activeEntities.remove(this);
+        GameWindow.queueKill(this);
     }
 }

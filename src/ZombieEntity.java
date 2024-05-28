@@ -12,8 +12,9 @@ public class ZombieEntity extends LivingEntity {
         }),new EntityAttributes(70,75,10));
         friction = 0;
         timerRandomize = (float)Math.random();
+        lungeTimer = timerRandomize * 4;
         System.out.println(position);
-        getAttributes().setKnockback(50);
+        getAttributes().setKnockback(100);
     }
 
     public void tick(float dt) {

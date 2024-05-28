@@ -21,11 +21,11 @@ public class DungeonBuilder {
     public void build(Tilemap t)
     {
         placedRooms = new boolean[maxDungeonSize][maxDungeonSize];
-        recursiveBuild(0,0,t,0);
+        recursiveBuild(0,0,t,0,0);
     }
-    public void recursiveBuild(int x, int y, Tilemap t,int direction)
+    public void recursiveBuild(int x, int y, Tilemap t,int direction, int index)
     {
-        buildRoom(x,y,t,direction);
+        buildRoom(x,y,t,direction,index == 0);
         ArrayList<Integer> directions = new ArrayList<>();
         if(insideDungeon(x,y-1) && !placedRooms[x][y-1]) directions.add(1);
         if(insideDungeon(x,y+1) && !placedRooms[x][y+1]) directions.add(2);
@@ -36,10 +36,10 @@ public class DungeonBuilder {
             int selectedDirection = directions.get((int)(Math.random() * directions.size()));
             cutHallway(x,y,t,selectedDirection);
             detail(x,y,t);
-            if (selectedDirection==1)recursiveBuild(x,y-1,t,selectedDirection);
-            else if (selectedDirection==2)recursiveBuild(x,y+1,t,selectedDirection);
-            else if (selectedDirection==3)recursiveBuild(x-1,y,t,selectedDirection);
-            else if (selectedDirection==4)recursiveBuild(x+1,y,t,selectedDirection);
+            if (selectedDirection==1)recursiveBuild(x,y-1,t,selectedDirection, index+1);
+            else if (selectedDirection==2)recursiveBuild(x,y+1,t,selectedDirection,index+1);
+            else if (selectedDirection==3)recursiveBuild(x-1,y,t,selectedDirection,index+1);
+            else if (selectedDirection==4)recursiveBuild(x+1,y,t,selectedDirection,index+1);
         }
         else
         {
@@ -92,10 +92,10 @@ public class DungeonBuilder {
     // 2 = down
     // 3 = left
     // 4 = right
-    public void buildRoom(int x, int y, Tilemap t, int startDirection)
+    public void buildRoom(int x, int y, Tilemap t, int startDirection,boolean forceHallway)
     {
         if(!insideDungeon(x,y))return;
-        boolean narrowRoom = Math.random() < 0.25;
+        boolean narrowRoom = Math.random() < 0.25 || forceHallway;
         placedRooms[x][y] = true;
         for(int x0 = 0; x0 < roomSize; x0++)
         {
@@ -112,6 +112,10 @@ public class DungeonBuilder {
         }
 
         cutHallway(x,y,t,startDirection+(startDirection%2)*2-1);
+        if(!narrowRoom)
+        {
+            GameWindow.activeEntities.add(new SpawningEntity(new Vector2((x+0.5f)*roomSize*Tilemap.tileSize,(y+0.5f)*roomSize*Tilemap.tileSize),(int)(Math.random()*3+2)));
+        }
     }
     public void detail(int x, int y, Tilemap t)
     {

@@ -8,9 +8,10 @@ public class EnemySpawn {
     {
         switch (entityType)
         {
-            case ZOMBIE -> GameWindow.activeEntities.add(new ZombieEntity(position));
-            case GHOST -> GameWindow.activeEntities.add(new GhostEntity(position));
+            case ZOMBIE -> GameWindow.queueSpawn(new ZombieEntity(position));
+            case GHOST -> GameWindow.queueSpawn(new GhostEntity(position));
         }
+        GameWindow.queueSpawn(new PoofEffect(position));
     }
     public static float getSpawnWeight(EntityType entityType, int level)
     {
@@ -46,7 +47,7 @@ public class EnemySpawn {
         for (int i = 0; i < count; i++) {
             spawn(rollForWeight(level,totalWeight),
                     // comically long vector math to decide where to spawn the enemy
-                    center.added(new Vector2((float)Math.random()*2-1,(float)Math.random()*2-1).normalized().multiplied((float)Math.random()*distance)));
+                    center.added(new Vector2((float)Math.random()*2-1,(float)Math.random()*2-1).multiplied(distance)));
         }
     }
 }

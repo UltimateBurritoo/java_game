@@ -20,12 +20,28 @@ public class PlayerHUD extends UIElement{
         g.setColor(Color.white);
         g.drawString("HP: " + (int)player.getCurrentHP() + " / " + (int)player.getAttributes().getMaxHP(),4,36);
 
+        PlayerInventory inventory = player.getInventory();
         // inventory
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < PlayerInventory.slotCount; i++)
         {
-            g.drawImage(AssetLoader.getSprite("inventory_slot"),5+i*18,48,null);
+            if(i==inventory.getSelectedSlot())
+            {
+                g.drawImage(AssetLoader.getSprite("selected_inventory_slot"),5+i*18,48,null);
+            }
+            else
+            {
+                g.drawImage(AssetLoader.getSprite("inventory_slot"),5+i*18,48,null);
+            }
+            InventoryItem item = inventory.getItem(i);
+            if(item != null) {
+                item.renderer.render(5 + i * 18, 48, g);
+            }
         }
-
+        g.setColor(Color.WHITE);
+        if(inventory.getHeldItem() != null)
+        {
+            g.drawString(inventory.getHeldItem().toString(),5,80);
+        }
         g.setColor(new Color(1,0,0,0.3f*((float)player.getiFrames() / PlayerEntity.invincibilityTime)));
         g.fillRect(0,0,GameWindow.pixelWidth,GameWindow.pixelHeight);
     }

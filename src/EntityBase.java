@@ -9,6 +9,9 @@ public abstract class EntityBase {
     AABB collider;
     SpritesheetRenderer spritesheet;
     boolean tilemapCollision = true;
+    boolean touchingTiles = false;
+
+    float time;
 
     public Vector2 getPosition() {
         return position;
@@ -59,10 +62,22 @@ public abstract class EntityBase {
         return entities.toArray(new EntityBase[]{});
     }
 
+    public EntityBase[] getTouching(int limit)
+    {
+        ArrayList<EntityBase> entities = new ArrayList<EntityBase>();
+        for (EntityBase e : GameWindow.activeEntities)
+        {
+            if(e == this || e.getPosition().distanceSquared(getPosition()) >= Math.pow(Math.max(collider.getSize().getX(),collider.getSize().getY()),2.0)) continue;
+            if(e.getCollider().isColliding(collider)) entities.add(e);
+            if(entities.size() >= limit) break;
+        }
+        return entities.toArray(new EntityBase[]{});
+    }
+
     public EntityBase(Vector2 position)
     {
         this.position = position;
-        this.velocity = Vector2.zero;
+        this.velocity = new Vector2();
     }
     public EntityBase(Vector2 position, GameRenderer r)
     {
@@ -78,7 +93,7 @@ public abstract class EntityBase {
     public EntityBase(Vector2 position, Vector2 size, GameRenderer r)
     {
         this.position = position;
-        this.velocity = Vector2.zero;
+        this.velocity = new Vector2();
         this.collider = new AABB(position,size);
         renderer = r;
         if(r.getClass() == SpritesheetRenderer.class)
@@ -89,16 +104,19 @@ public abstract class EntityBase {
     public void tick(float dt)
     {
         if(GameWindow.isGameOver()) return; // Do nothing if the player is dead
+        time+=dt;
+        touchingTiles = false;
         Vector2 motion = this.velocity.multiplied(dt);
         if(tilemapCollision && collider.moved(motion).collideTilemap(Game.getWindow().tilemap))
         {
-            velocity.set(Vector2.zero);
+            velocity.set(new Vector2());
+            touchingTiles = true;
         }
         else
         {
             position.add(motion);
         }
-        velocity.moveTowards(Vector2.zero,dt*friction);
+        velocity.moveTowards(new Vector2(),dt*friction);
         collider.position.set(position);
         if(spritesheet != null)
         {

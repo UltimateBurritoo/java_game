@@ -16,6 +16,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     BufferedImage canvasImage;
     Graphics2D g2d;
     Tilemap tilemap;
+    boolean isClicked;
 
     public static ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
 
@@ -87,14 +88,20 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     public static void setViewportPosition(Vector2 viewportPosition) {
         GameWindow.viewportPosition = viewportPosition;
     }
-    Vector2 lastMousePos = Vector2.zero;
+
+    public boolean getClicked()
+    {
+        return isClicked;
+    }
+
+    Vector2 lastMousePos = new Vector2();
     public Vector2 getMousePos()
     {
         if (getMousePosition() == null) {
             return lastMousePos;
         }
-        else if (lastMousePos == null) return Vector2.zero;
-        lastMousePos = new Vector2((float)getMousePosition().getX(),(float)getMousePosition().getY());
+        else if (lastMousePos == null) return new Vector2();
+        lastMousePos = new Vector2((float)getMousePosition().getX()/pixelScale,(float)getMousePosition().getY()/pixelScale);
         return lastMousePos;
     }
 
@@ -119,14 +126,15 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     {return;}
     public void mousePressed(MouseEvent e)
     {
-        getPlayer().click(e.getButton(),getViewportPosition().added(e.getX(),e.getY()));
+        getPlayer().click(e.getButton(),getViewportPosition().added(e.getX()/pixelScale,e.getY()/pixelScale));
+        if(e.getButton() == 1) isClicked = true;
     }
     public void mouseReleased(MouseEvent e)
-    {return;}
+    {if(e.getButton() == 1) isClicked = false;}
     public void mouseEntered(MouseEvent e)
     {return;}
     public void mouseExited(MouseEvent e)
-    {return;}
+    {isClicked = false;}
     public static void queueKill(EntityBase e)
     {
         killQueue.add(e);

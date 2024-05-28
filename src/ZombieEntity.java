@@ -49,7 +49,7 @@ public class ZombieEntity extends LivingEntity {
         else {
             spritesheet.playAnimation(0);
             Vector2 movement = targetPosition.subtracted(getPosition()).normalized().multiplied(getAttributes().getSpeed());
-            if(!inRange) movement.set(Vector2.zero);
+            if(!inRange) movement.set(new Vector2());
             setVelocity(getVelocity().movedTowards(movement,dt*400));
             spritesheet.setFlipped(movement.getX() > 0);
             checkEnemyMelee(getAttributes().getAttack(),getAttributes().getKnockback());

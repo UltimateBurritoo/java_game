@@ -7,18 +7,22 @@ public class LivingEntity extends EntityBase{
     EntityAttributes attributes;
     float currentHP;
     float iFrames;
-    public static final float invincibilityTime = 0.25f;
+    boolean hideHealth;
+    public static final float invincibilityTime = 0.1f;
+    HealthbarRenderer healthbarRenderer;
     public LivingEntity(Vector2 position, Vector2 size, GameRenderer r,EntityAttributes attributes)
     {
         super(position,size,r);
         this.attributes = attributes;
         currentHP = attributes.getMaxHP();
+        healthbarRenderer = new HealthbarRenderer(this,16);
     }
 
     public void render(Graphics2D g2d) {
         Vector2 p = position.subtracted(GameWindow.getViewportPosition()).added(0,getCollider().getSize().getY()-2);
         g2d.drawImage(shadow,(int)p.getX(),(int)p.getY(),null);
         super.render(g2d);
+        if(!hideHealth && getCurrentHP() < getAttributes().getMaxHP()) healthbarRenderer.render(position.subtracted(GameWindow.getViewportPosition()), g2d);
     }
 
     public void checkEnemyMelee(float damage, float knockback)

@@ -49,5 +49,9 @@ public class EnemySpawn {
                     // comically long vector math to decide where to spawn the enemy
                     center.added(new Vector2((float)Math.random()*2-1,(float)Math.random()*2-1).multiplied(distance)));
         }
+        if(Math.random() < 0.25f)
+        {
+            GameWindow.queueSpawn(new ChestEntity(center));
+        }
     }
 }

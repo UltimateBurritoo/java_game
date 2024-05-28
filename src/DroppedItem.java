@@ -9,7 +9,7 @@ public class DroppedItem extends EntityBase{
     }
     boolean inRange()
     {
-        return Game.getWindow().getPlayer().getPosition().distance(getPosition()) < 48;
+        return Game.getWindow().getPlayer().getPosition().distance(getPosition()) < 32;
     }
 
     public void render(Graphics2D g2d) {

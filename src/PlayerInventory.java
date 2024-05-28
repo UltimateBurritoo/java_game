@@ -1,6 +1,7 @@
 public class PlayerInventory {
     public final static int slotCount = 5;
-    public InventoryItem[] items;
+    InventoryItem[] items;
+    int selectedSlot;
     public PlayerInventory()
     {
         items = new InventoryItem[slotCount];
@@ -23,5 +24,23 @@ public class PlayerInventory {
         InventoryItem temp = items[slot];
         items[slot] = item;
         return temp;
+    }
+
+    public int getSelectedSlot() {
+        return selectedSlot;
+    }
+
+    public void setSelectedSlot(int selectedSlot) {
+        this.selectedSlot = selectedSlot;
+    }
+
+    public InventoryItem getItem(int index)
+    {
+        return items[index];
+    }
+
+    public InventoryItem getHeldItem()
+    {
+        return items[selectedSlot];
     }
 }

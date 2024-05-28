@@ -1,13 +1,5 @@
 public class Vector2 {
 
-    public static final Vector2 up = new Vector2(0,-1);
-    public static final Vector2 down = new Vector2(0,1);
-    public static final Vector2 right = new Vector2(1,0);
-    public static final Vector2 left = new Vector2(-1,0);
-    public static final Vector2 one = new Vector2(1,1);
-    public static final Vector2 negative_one = new Vector2(-1,-1);
-    public static final Vector2 zero = new Vector2(0,0);
-
     float x;
     float y;
     public  Vector2()
@@ -178,7 +170,7 @@ public class Vector2 {
     public Vector2 normalized()
     {
         float m = magnitude();
-        if(m == 0) return Vector2.zero;
+        if(m == 0) return new Vector2();
         return new Vector2(this.x/m,this.y/m);
     }
 

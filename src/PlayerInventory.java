@@ -43,4 +43,21 @@ public class PlayerInventory {
     {
         return items[selectedSlot];
     }
+
+    public void dropSlot(int slot)
+    {
+        GameWindow.queueSpawn(new DroppedItem(Game.getWindow().getPlayer().getPosition().copy(),getItem(slot)));
+        items[slot] = null;
+    }
+    public boolean isFull()
+    {
+        for (int i = 0; i < slotCount; i++)
+        {
+            if(items[i] == null)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 }

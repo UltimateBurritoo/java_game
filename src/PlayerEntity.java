@@ -1,3 +1,5 @@
+import java.security.Key;
+
 public class PlayerEntity extends LivingEntity{
 
     public static final float invincibilityTime = 0.5f;
@@ -13,7 +15,7 @@ public class PlayerEntity extends LivingEntity{
                 new SpriteAnimation(6,10,12,true) // walk back
         }),new EntityAttributes(100,175,20));
         inventory = new PlayerInventory();
-        inventory.give(new ItemFlamethrowerSpell());
+        inventory.give(new ItemBulletSpell());
         hideHealth = true;
     }
     public PlayerInventory getInventory()
@@ -53,6 +55,11 @@ public class PlayerEntity extends LivingEntity{
         else if(GameWindow.getPressedKey(Keybinds.KEY_3)) inventory.setSelectedSlot(2);
         else if(GameWindow.getPressedKey(Keybinds.KEY_4)) inventory.setSelectedSlot(3);
         else if(GameWindow.getPressedKey(Keybinds.KEY_5)) inventory.setSelectedSlot(4);
+        // drop item
+        if(GameWindow.getPressedKey(Keybinds.KEY_Q) && inventory.getHeldItem() != null)
+        {
+            inventory.dropSlot(inventory.getSelectedSlot());
+        }
 
 
         GameWindow.setLightPosition(position);

@@ -16,14 +16,26 @@ public class DroppedItem extends EntityBase{
         super.render(g2d);
         if(inRange())
         {
-            g2d.setColor(Color.WHITE);
-            g2d.drawString("[E] Pick up item", GameWindow.pixelWidth/2,GameWindow.pixelHeight/2);
+            if(Game.getWindow().getPlayer().getInventory().isFull())
+            {
+                g2d.setColor(Color.RED);
+                g2d.drawString("Inventory full", GameWindow.pixelWidth/2,GameWindow.pixelHeight/2);
+            }
+            else
+            {
+                g2d.setColor(Color.WHITE);
+                g2d.drawString("[E] Take "+item.toString(), GameWindow.pixelWidth/2,GameWindow.pixelHeight/2);
+            }
         }
     }
 
     public void tick(float dt)
     {
         super.tick(dt);
+        if(GameWindow.pressedKeys[Keybinds.KEY_E] && inRange() && !Game.getWindow().getPlayer().getInventory().isFull())
+        {
+            if(Game.getWindow().getPlayer().getInventory().give(item)) kill();
+        }
         if(item == null) kill();
     }
 }

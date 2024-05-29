@@ -2,7 +2,8 @@ public class EnemySpawn {
     public enum EntityType
     {
         ZOMBIE,
-        GHOST
+        GHOST,
+        SKELETON
     }
     public static void spawn(EntityType entityType, Vector2 position)
     {
@@ -10,6 +11,7 @@ public class EnemySpawn {
         {
             case ZOMBIE -> GameWindow.queueSpawn(new ZombieEntity(position));
             case GHOST -> GameWindow.queueSpawn(new GhostEntity(position));
+            case SKELETON -> GameWindow.queueSpawn(new SkeletonEntity(position));
         }
         GameWindow.queueSpawn(new PoofEffect(position));
     }
@@ -19,6 +21,7 @@ public class EnemySpawn {
         {
             case ZOMBIE: return Math.max(0,15-level*1.5f);
             case GHOST: return level * 0.9f + 4f;
+            case SKELETON: return level * 1.2f + 1f;
         }
         return 0;
     }

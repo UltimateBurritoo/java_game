@@ -8,7 +8,6 @@ public class SkeletonEntity extends LivingEntity {
                 new SpriteAnimation(0,3,12,true)
         }),new EntityAttributes(150,50,25));
         friction = 0;
-        System.out.println(position);
         getAttributes().setKnockback(200);
     }
 

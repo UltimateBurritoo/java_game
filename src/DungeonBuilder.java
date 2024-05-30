@@ -116,7 +116,7 @@ public class DungeonBuilder {
         cutHallway(x,y,t,startDirection+(startDirection%2)*2-1);
         if(!narrowRoom)
         {
-            int spawnCount = (int)(Math.random()*3+1);
+            int spawnCount = (int)(Math.random()*3+2 + GameWindow.currentLevel);
             GameWindow.queueSpawn(new SpawningEntity(new Vector2((x+0.5f)*roomSize*Tilemap.tileSize,(y+0.5f)*roomSize*Tilemap.tileSize),spawnCount));
         }
     }

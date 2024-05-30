@@ -5,7 +5,6 @@ public class PlayerEntity extends LivingEntity{
     public static final float invincibilityTime = 0.5f;
     float itemCooldown;
     PlayerInventory inventory;
-    int coins;
     public PlayerEntity()
     {
         super(new Vector2(160,160),new Vector2(12,12),new SpritesheetRenderer("player",10,1,new SpriteAnimation[]{
@@ -15,7 +14,7 @@ public class PlayerEntity extends LivingEntity{
                 new SpriteAnimation(6,10,12,true) // walk back
         }),new EntityAttributes(100,175,20));
         inventory = new PlayerInventory();
-        inventory.give(new ItemBurstSpell());
+        inventory.give(new ItemBulletSpell());
         hideHealth = true;
     }
     public PlayerInventory getInventory()
@@ -23,12 +22,9 @@ public class PlayerEntity extends LivingEntity{
         return inventory;
     }
 
-    public int getCoins() {
-        return coins;
-    }
-
-    public void setCoins(int coins) {
-        this.coins = coins;
+    public float getItemCooldown()
+    {
+        return itemCooldown;
     }
 
     boolean faceBack = false;
@@ -70,6 +66,7 @@ public class PlayerEntity extends LivingEntity{
     {
         super.damage(hp);
         iFrames = invincibilityTime;
+        GameWindow.addScreenShake(3);
     }
     public float getPointingAngle()
     {
@@ -83,8 +80,8 @@ public class PlayerEntity extends LivingEntity{
         {
             if(inventory.getHeldItem() != null && itemCooldown == 0)
             {
-                inventory.getHeldItem().useItem(this);
                 itemCooldown = inventory.getHeldItem().getCooldown();
+                inventory.getHeldItem().useItem(this);
             }
         }
     }

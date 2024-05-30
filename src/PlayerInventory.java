@@ -60,4 +60,8 @@ public class PlayerInventory {
         }
         return true;
     }
+    public void consumeHeldItem()
+    {
+        items[selectedSlot] = null;
+    }
 }

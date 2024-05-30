@@ -7,7 +7,7 @@ public class ItemBurstSpell extends InventoryItem{
     }
     public float getDamage()
     {
-        return 17*(float)Math.pow(1.3f,getTier());
+        return 24*(float)Math.pow(1.3f,getTier());
     }
     public void useItem(PlayerEntity player) {
         for (int i = 0; i < 5; i++) {

@@ -10,7 +10,7 @@ public class PlayerHUD extends UIElement{
     }
     public void render(int x, int y, Graphics2D g) {
         if(!isVisible() || GameWindow.isGameOver()) return;
-
+        g.setFont(new Font(Font.SANS_SERIF,Font.PLAIN,12));
         // health bar
         g.drawImage(AssetLoader.getSprite("healthbar_empty"),4,16,null);
         healthShown = (player.getCurrentHP() - healthShown) * 0.3f + healthShown;
@@ -19,6 +19,18 @@ public class PlayerHUD extends UIElement{
         g.setClip(0,0,GameWindow.pixelWidth,GameWindow.pixelHeight);
         g.setColor(Color.white);
         g.drawString("HP: " + (int)player.getCurrentHP() + " / " + (int)player.getAttributes().getMaxHP(),4,36);
+        // cooldown bar
+        if (player.getInventory().getHeldItem() != null)
+        {
+            float percentage = player.getItemCooldown() / player.getInventory().getHeldItem().getCooldown();
+            if (percentage > 0)
+            {
+                g.setColor(Color.gray);
+                g.fillRect(4,40,100,2);
+                g.setColor(Color.white);
+                g.fillRect(4,40,(int)(100 * Math.clamp(percentage,0f,1f)),2);
+            }
+        }
 
         PlayerInventory inventory = player.getInventory();
         // inventory
@@ -41,7 +53,9 @@ public class PlayerHUD extends UIElement{
         if(inventory.getHeldItem() != null)
         {
             g.drawString(inventory.getHeldItem().toString(),5,80);
+            g.drawString("[Q] to drop",5,96);
         }
+        g.drawString("Floor " + (GameWindow.currentLevel+1), 5,GameWindow.pixelHeight-24);
         g.setColor(new Color(1,0,0,0.3f*((float)player.getiFrames() / PlayerEntity.invincibilityTime)));
         g.fillRect(0,0,GameWindow.pixelWidth,GameWindow.pixelHeight);
     }

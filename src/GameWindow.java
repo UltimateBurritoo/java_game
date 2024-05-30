@@ -22,6 +22,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     public static ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
 
     public static ArrayList<EntityBase> activeEntities = new ArrayList<EntityBase>();
+    static float screenShake;
     static ArrayList<EntityBase> killQueue = new ArrayList<EntityBase>();
     static ArrayList<EntityBase> spawnQueue = new ArrayList<EntityBase>();
     PlayerEntity player;
@@ -47,6 +48,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
         player = new PlayerEntity();
         activeEntities.add(player);
         uiElements.add(new PlayerHUD(player));
+        uiElements.add(new GameOverScreen());
 
     }
     public int getPixelWidth()
@@ -83,7 +85,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     }
 
     public static Vector2 getViewportPosition() {
-        return viewportPosition;
+        return viewportPosition.added(new Vector2((float)Math.random()*screenShake,(float)Math.random()*screenShake));
     }
 
     public static void setViewportPosition(Vector2 viewportPosition) {
@@ -164,6 +166,14 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
         currentLevel++;
     }
 
+    public static float getScreenShake() {
+        return screenShake;
+    }
+    public static void addScreenShake(float amount)
+    {
+        screenShake+=amount;
+    }
+
     long previousTime = System.currentTimeMillis();
     int fps;
     // main loop
@@ -191,7 +201,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         // draw to buffer (g2d)
         g2d.clearRect(0,0,getPixelWidth(),getPixelHeight());
-        tilemap.render((int)-viewportPosition.getX(),(int)-viewportPosition.getY(),g2d);
+        tilemap.render((int)-getViewportPosition().getX(),(int)-getViewportPosition().getY(),g2d);
         for(EntityBase entity : activeEntities)
         {
             entity.render(g2d);
@@ -209,9 +219,13 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
 
     public void tick(float dt)
     {
-        for (EntityBase entity : activeEntities)
+        screenShake = (-screenShake)*(dt*7)+screenShake;
+        if(!isGameOver())
         {
-            entity.tick(dt);
+            for (EntityBase entity : activeEntities)
+            {
+                entity.tick(dt);
+            }
         }
         for (EntityBase toKill : killQueue)
         {

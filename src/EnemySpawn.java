@@ -3,7 +3,8 @@ public class EnemySpawn {
     {
         ZOMBIE,
         GHOST,
-        SKELETON
+        SKELETON,
+        BOMBER
     }
     public static void spawn(EntityType entityType, Vector2 position)
     {
@@ -12,6 +13,7 @@ public class EnemySpawn {
             case ZOMBIE -> GameWindow.queueSpawn(new ZombieEntity(position));
             case GHOST -> GameWindow.queueSpawn(new GhostEntity(position));
             case SKELETON -> GameWindow.queueSpawn(new SkeletonEntity(position));
+            case BOMBER -> GameWindow.queueSpawn(new BomberEntity(position));
         }
         GameWindow.queueSpawn(new PoofEffect(position));
     }
@@ -22,6 +24,7 @@ public class EnemySpawn {
             case ZOMBIE: return Math.max(0,15-level*1.5f);
             case GHOST: return level * 0.9f + 4f;
             case SKELETON: return level * 1.2f + 4f;
+            case BOMBER: return  level * 1.4f + 3f;
         }
         return 0;
     }
@@ -52,7 +55,7 @@ public class EnemySpawn {
                     // comically long vector math to decide where to spawn the enemy
                     center.added(new Vector2((float)Math.random()*2-1,(float)Math.random()*2-1).multiplied(distance)));
         }
-        if(Math.random() < 0.25f)
+        if(Math.random() < 0.6f)
         {
             GameWindow.queueSpawn(new ChestEntity(center));
         }

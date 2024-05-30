@@ -69,7 +69,10 @@ public abstract class Projectile extends EntityBase{
         g2d.setTransform(new AffineTransform());
 
     }
+    public void hit(LivingEntity e)
+    {
 
+    }
     public void tick(float dt)
     {
         super.tick(dt);
@@ -79,6 +82,7 @@ public abstract class Projectile extends EntityBase{
             LivingEntity entity = (LivingEntity)collisions[0];
             entity.damage(damage);
             entity.knockback(velocity.normalized().multiplied(knockback));
+            hit(entity);
             if(!piercing) kill();
         }
         if(touchingTiles) kill();

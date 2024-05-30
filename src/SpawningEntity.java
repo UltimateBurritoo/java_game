@@ -22,7 +22,7 @@ public class SpawningEntity extends EntityBase{
         float dist = Game.getWindow().getPlayer().getPosition().distance(getPosition());
         if(dist < spawnDistance)
         {
-            EnemySpawn.spawnGroup(0,spawnCount,getPosition(),spawnRadius);
+            EnemySpawn.spawnGroup(GameWindow.currentLevel,spawnCount,getPosition(),spawnRadius);
             kill();
         }
     }

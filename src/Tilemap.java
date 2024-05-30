@@ -10,6 +10,12 @@ class Tile
             new Tile("tile_bricks",false),
             new Tile("wall_bricks",true),
             new Tile("wall_inside",true),
+            new Tile("tile_bricks_alt1",false),
+            new Tile("wall_bricks_alt1",true),
+            new Tile("wall_inside_alt1",true),
+            new Tile("tile_bricks_alt2",false),
+            new Tile("wall_bricks_alt2",true),
+            new Tile("wall_inside_alt2",true),
     };
     public Tile(String sprite, boolean canCollide)
     {

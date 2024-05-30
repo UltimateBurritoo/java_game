@@ -20,6 +20,22 @@ public class DungeonBuilder {
     }
     public void build(Tilemap t)
     {
+        if(GameWindow.currentLevel % 3 == 0)
+        {
+            floorTile = 0;
+            wallTile = 1;
+            insideTile = 2;
+        } else if (GameWindow.currentLevel % 3 == 1) {
+            floorTile = 3;
+            wallTile = 4;
+            insideTile = 5;
+        }
+        else
+        {
+            floorTile = 6;
+            wallTile = 7;
+            insideTile = 8;
+        }
         placedRooms = new boolean[maxDungeonSize][maxDungeonSize];
         recursiveBuild(0,0,t,0,0);
     }

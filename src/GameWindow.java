@@ -161,9 +161,10 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
         }
         Game.getWindow().getPlayer().setPosition(new Vector2(160,160));
         Game.getWindow().getTilemap().clear();
+        currentLevel++;
         DungeonBuilder b = new DungeonBuilder();
         b.build(Game.getWindow().getTilemap());
-        currentLevel++;
+
     }
 
     public static float getScreenShake() {

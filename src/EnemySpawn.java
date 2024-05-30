@@ -57,7 +57,7 @@ public class EnemySpawn {
         }
         if(Math.random() < 0.6f)
         {
-            GameWindow.queueSpawn(new ChestEntity(center));
+            GameWindow.queueSpawn(new ChestEntity(center.added(new Vector2((float)Math.random()*2-1,(float)Math.random()*2-1).multiplied(distance))));
         }
     }
 }

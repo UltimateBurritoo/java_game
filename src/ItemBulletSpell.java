@@ -6,7 +6,7 @@ public class ItemBulletSpell extends InventoryItem{
     }
     public float getDamage()
     {
-        return 16*(float)Math.pow(1.2f,getTier());
+        return 16*(float)Math.pow(1.1f,getTier());
     }
     public void useItem(PlayerEntity player) {
         setCooldown(0.25f*(float)Math.pow(0.8,getTier()-1));

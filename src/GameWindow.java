@@ -17,6 +17,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     Graphics2D g2d;
     Tilemap tilemap;
     boolean isClicked;
+    static int currentLevel;
 
     public static ArrayList<UIElement> uiElements = new ArrayList<UIElement>();
 
@@ -89,6 +90,11 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
         GameWindow.viewportPosition = viewportPosition;
     }
 
+    public Tilemap getTilemap()
+    {
+        return tilemap;
+    }
+
     public boolean getClicked()
     {
         return isClicked;
@@ -143,6 +149,20 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     {
         spawnQueue.add(e);
     }
+    static boolean skipFrame = false;
+    public static void nextLevel()
+    {
+        skipFrame = true;
+        for (EntityBase entity : activeEntities)
+        {
+            if(!(entity instanceof PlayerEntity)) entity.kill();
+        }
+        Game.getWindow().getPlayer().setPosition(new Vector2(160,160));
+        Game.getWindow().getTilemap().clear();
+        DungeonBuilder b = new DungeonBuilder();
+        b.build(Game.getWindow().getTilemap());
+        currentLevel++;
+    }
 
     long previousTime = System.currentTimeMillis();
     int fps;
@@ -189,6 +209,10 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
 
     public void tick(float dt)
     {
+        for (EntityBase entity : activeEntities)
+        {
+            entity.tick(dt);
+        }
         for (EntityBase toKill : killQueue)
         {
             if(activeEntities.contains(toKill))
@@ -202,9 +226,6 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
             activeEntities.add(toSpawn);
         }
         spawnQueue.clear();
-        for (EntityBase entity : activeEntities)
-        {
-            entity.tick(dt);
-        }
+
     }
 }

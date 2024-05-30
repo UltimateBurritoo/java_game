@@ -5,12 +5,30 @@ public class ChestEntity extends EntityBase{
     public ChestEntity(Vector2 position)
     {
         super(position,new SpriteRenderer("chest"));
-        item = new ItemFlamethrowerSpell();
+        item = getRandomLoot();
+    }
+    public static InventoryItem getRandomLoot()
+    {
+        int itemIndex = (int)(Math.random() * 4);
+        InventoryItem result;
+        switch (itemIndex)
+        {
+            case 0: result = new ItemBulletSpell();
+            case 1: result = new ItemFlamethrowerSpell();
+            case 2: result = new ItemBurstSpell();
+            case 3: result = new ItemHealthPotion();
+            default: result = new ItemBulletSpell();
+        }
+        if (result != null) {
+            result.setTier((int)Math.round(GameWindow.currentLevel + 1 + Math.random()*0.7f));
+        }
+        return null;
     }
     public void open()
     {
         GameWindow.queueSpawn(new PoofEffect(getPosition()));
         GameWindow.queueSpawn(new DroppedItem(getPosition(),item));
+        System.out.println("killed");
         kill();
     }
     boolean inRange()

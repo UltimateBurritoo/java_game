@@ -43,7 +43,9 @@ public class DungeonBuilder {
         }
         else
         {
+            // final room
             detail(x,y,t);
+            GameWindow.queueSpawn(new ExitEntity(new Vector2((x+0.5f)*roomSize*Tilemap.tileSize,(y+0.5f)*roomSize*Tilemap.tileSize)));
             return;
         }
     }
@@ -115,7 +117,7 @@ public class DungeonBuilder {
         if(!narrowRoom)
         {
             int spawnCount = (int)(Math.random()*3+1);
-            GameWindow.activeEntities.add(new SpawningEntity(new Vector2((x+0.5f)*roomSize*Tilemap.tileSize,(y+0.5f)*roomSize*Tilemap.tileSize),spawnCount));
+            GameWindow.queueSpawn(new SpawningEntity(new Vector2((x+0.5f)*roomSize*Tilemap.tileSize,(y+0.5f)*roomSize*Tilemap.tileSize),spawnCount));
         }
     }
     public void detail(int x, int y, Tilemap t)

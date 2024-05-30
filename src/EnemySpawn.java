@@ -21,7 +21,7 @@ public class EnemySpawn {
         {
             case ZOMBIE: return Math.max(0,15-level*1.5f);
             case GHOST: return level * 0.9f + 4f;
-            case SKELETON: return level * 1.2f + 1f;
+            case SKELETON: return level * 1.2f + 4f;
         }
         return 0;
     }

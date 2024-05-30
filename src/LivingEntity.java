@@ -70,6 +70,11 @@ public class LivingEntity extends EntityBase{
         this.currentHP -= hp;
         iFrames = invincibilityTime;
     }
+    public void heal(float hp)
+    {
+        this.currentHP += hp;
+        this.currentHP = Math.min(this.currentHP,getAttributes().getMaxHP());
+    }
 
     public void knockback(Vector2 kb)
     {

@@ -15,7 +15,7 @@ public class PlayerEntity extends LivingEntity{
                 new SpriteAnimation(6,10,12,true) // walk back
         }),new EntityAttributes(100,175,20));
         inventory = new PlayerInventory();
-        inventory.give(new ItemBulletSpell());
+        inventory.give(new ItemBurstSpell());
         hideHealth = true;
     }
     public PlayerInventory getInventory()

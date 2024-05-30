@@ -92,6 +92,10 @@ public class Tilemap extends GameRenderer {
         if(grid[ix][iy] == null) return true;
         return grid[ix][iy].hasCollision();
     }
+    public void clear()
+    {
+        grid = new Tile[gridWidth][gridHeight];
+    }
 
     public void render(int x, int y, Graphics2D g) {
         int tilesX = Game.getWindow().getPixelWidth() / tileSize + 1;

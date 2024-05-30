@@ -61,7 +61,7 @@ public class DungeonBuilder {
         {
             // final room
             detail(x,y,t);
-            GameWindow.queueSpawn(new ExitEntity(new Vector2((x+0.5f)*roomSize*Tilemap.tileSize,(y+0.5f)*roomSize*Tilemap.tileSize)));
+            GameWindow.queueSpawn(new ExitEntity(new Vector2((x+0.5f)*roomSize*Tilemap.tileSize-32,(y+0.5f)*roomSize*Tilemap.tileSize-32)));
             return;
         }
     }

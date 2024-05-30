@@ -1,7 +1,7 @@
 public class ExitEntity extends EntityBase{
     public ExitEntity(Vector2 position)
     {
-        super(position,new Vector2(48,48), new SpriteRenderer("exit"));
+        super(position,new Vector2(64,64), new SpriteRenderer("exit"));
     }
     public void tick(float dt)
     {

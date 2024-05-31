@@ -6,11 +6,12 @@ public class SkeletonEntity extends LivingEntity {
     {
         super(position,new Vector2(12,12),new SpritesheetRenderer("skeleton",4,1,new SpriteAnimation[]{
                 new SpriteAnimation(0,3,12,true)
-        }),new EntityAttributes(150,50,25));
+        }),new EntityAttributes(150,50,35));
         friction = 0;
         getAttributes().setKnockback(200);
     }
-
+    // Skeleton Behavior
+    // - Move towards the player slowly and deal a lot of damage
     public void tick(float dt) {
         target = Game.getWindow().getPlayer();
         boolean inRange = target.getPosition().distance(getPosition()) < 300;

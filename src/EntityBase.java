@@ -2,6 +2,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class EntityBase {
+    // the base class for all entities in the game
     Vector2 position;
     Vector2 velocity;
     float friction = 1900;

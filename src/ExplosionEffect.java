@@ -45,6 +45,7 @@ public class ExplosionEffect extends EffectEntity{
             {
                 if (entity instanceof LivingEntity && entity.getPosition().distance(getPosition()) <= radius)
                 {
+                    // damage all nearby entities with a linear distance falloff
                     LivingEntity e = (LivingEntity)entity;
                     float attenuation = Math.clamp(1f-(e.getPosition().distance(getPosition())/radius),0f,1f);
                     e.damage(damage*attenuation);

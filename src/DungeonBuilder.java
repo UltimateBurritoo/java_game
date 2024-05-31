@@ -20,6 +20,7 @@ public class DungeonBuilder {
     }
     public void build(Tilemap t)
     {
+        // Choose the appropriate tile palette for each floor
         if(GameWindow.currentLevel % 3 == 0)
         {
             floorTile = 0;
@@ -36,12 +37,16 @@ public class DungeonBuilder {
             wallTile = 7;
             insideTile = 8;
         }
+        // create the array to keep track of which rooms are already created
         placedRooms = new boolean[maxDungeonSize][maxDungeonSize];
         recursiveBuild(0,0,t,0,0);
     }
+    // Recursive funtion to build a dungeon
     public void recursiveBuild(int x, int y, Tilemap t,int direction, int index)
     {
+        // First room is always a hallway
         buildRoom(x,y,t,direction,index == 0);
+        // Create the list of available directions to build in
         ArrayList<Integer> directions = new ArrayList<>();
         if(insideDungeon(x,y-1) && !placedRooms[x][y-1]) directions.add(1);
         if(insideDungeon(x,y+1) && !placedRooms[x][y+1]) directions.add(2);
@@ -49,17 +54,21 @@ public class DungeonBuilder {
         if(insideDungeon(x+1,y) && !placedRooms[x+1][y]) directions.add(4);
         if(directions.size() > 0)
         {
+            // pick a random direction from this list
             int selectedDirection = directions.get((int)(Math.random() * directions.size()));
+            // cut a hallway in the direction
             cutHallway(x,y,t,selectedDirection);
+            // detail the room after all building and cutting of hallways
             detail(x,y,t);
+            // build another room in this direction
             if (selectedDirection==1)recursiveBuild(x,y-1,t,selectedDirection, index+1);
             else if (selectedDirection==2)recursiveBuild(x,y+1,t,selectedDirection,index+1);
             else if (selectedDirection==3)recursiveBuild(x-1,y,t,selectedDirection,index+1);
             else if (selectedDirection==4)recursiveBuild(x+1,y,t,selectedDirection,index+1);
         }
+        // If there are no valid directions, set this room to the end room
         else
         {
-            // final room
             detail(x,y,t);
             GameWindow.queueSpawn(new ExitEntity(new Vector2((x+0.5f)*roomSize*Tilemap.tileSize-32,(y+0.5f)*roomSize*Tilemap.tileSize-32)));
             return;
@@ -69,6 +78,7 @@ public class DungeonBuilder {
     {
         return x >= 0 && y >= 0 && x < maxDungeonSize && y < maxDungeonSize;
     }
+    // Cut a hallway into a room
     public void cutHallway(int x, int y, Tilemap t, int direction)
     {
         if (direction == 1)
@@ -110,6 +120,8 @@ public class DungeonBuilder {
     // 2 = down
     // 3 = left
     // 4 = right
+
+    // Build a singular room with a hallway leading in
     public void buildRoom(int x, int y, Tilemap t, int startDirection,boolean forceHallway)
     {
         if(!insideDungeon(x,y))return;
@@ -130,12 +142,14 @@ public class DungeonBuilder {
         }
 
         cutHallway(x,y,t,startDirection+(startDirection%2)*2-1);
+        // Only big rooms will spawn enemies and chests
         if(!narrowRoom)
         {
             int spawnCount = (int)(Math.random()*3+2 + GameWindow.currentLevel);
             GameWindow.queueSpawn(new SpawningEntity(new Vector2((x+0.5f)*roomSize*Tilemap.tileSize,(y+0.5f)*roomSize*Tilemap.tileSize),spawnCount));
         }
     }
+    // Add the front wall tiles to a room for aesthetics
     public void detail(int x, int y, Tilemap t)
     {
         for (int x0 = 0; x0 < roomSize; x0++) {

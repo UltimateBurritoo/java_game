@@ -28,6 +28,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     PlayerEntity player;
     public GameWindow()
     {
+        // setup the window
         setVisible(true);
         setSize(1280, 720);
         setTitle("game");
@@ -38,13 +39,17 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
                 System.exit(0);
             }
         });
+        // setup input listeners
         addKeyListener(this);
         addMouseListener(this);
+        // create the downscaled image to draw to
         canvasImage = new BufferedImage(getWidth()/pixelScale,(getHeight()-topPadding)/pixelScale,BufferedImage.TYPE_INT_ARGB);
         g2d = canvasImage.createGraphics();
+        // create and build a dungeon tilemap
         tilemap = new Tilemap(100,100);
         DungeonBuilder b = new DungeonBuilder();
         b.build(tilemap);
+        // spawn the player
         player = new PlayerEntity();
         activeEntities.add(player);
         uiElements.add(new PlayerHUD(player));
@@ -143,6 +148,8 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     {return;}
     public void mouseExited(MouseEvent e)
     {isClicked = false;}
+
+    // Rather than immediately removing and spawning entities from the scene, we queue them to be spawned/destroyed in the next frame
     public static void queueKill(EntityBase e)
     {
         killQueue.add(e);
@@ -183,7 +190,10 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
         System.out.println("main thread started");
         while (true) {
             try {
+                // thread wait between each frame
                 Thread.sleep(1);
+                // get the deltatime, aka the time between each frame.
+                // useful for calculating physics and other processes that operate on continuous timers
                 long msDeltaTime = System.currentTimeMillis() - previousTime;
                 float deltaTime = (float)msDeltaTime / 1000;
                 fps = (int)(1 / deltaTime);
@@ -203,6 +213,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
         // draw to buffer (g2d)
         g2d.clearRect(0,0,getPixelWidth(),getPixelHeight());
         tilemap.render((int)-getViewportPosition().getX(),(int)-getViewportPosition().getY(),g2d);
+        // draw all the entities
         for(EntityBase entity : activeEntities)
         {
             entity.render(g2d);
@@ -213,7 +224,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
         }
         g2d.setColor(Color.white);
         g2d.drawString(fps + " fps", 2,10);
-
+        // draw the pixelated buffer to the screen
         g.drawImage(canvasImage,0,topPadding,getWidth(),getHeight()-topPadding,null);
 
     }
@@ -221,6 +232,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
     public void tick(float dt)
     {
         screenShake = (-screenShake)*(dt*7)+screenShake;
+        // simulate all entities
         if(!isGameOver())
         {
             for (EntityBase entity : activeEntities)
@@ -228,6 +240,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
                 entity.tick(dt);
             }
         }
+        // kill the queued entities
         for (EntityBase toKill : killQueue)
         {
             if(activeEntities.contains(toKill))
@@ -236,6 +249,7 @@ public class GameWindow extends Frame implements KeyListener, MouseListener, Run
             }
         }
         killQueue.clear();
+        // spawn the queued entities
         for (EntityBase toSpawn : spawnQueue)
         {
             activeEntities.add(toSpawn);

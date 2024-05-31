@@ -15,7 +15,10 @@ public class ZombieEntity extends LivingEntity {
         lungeTimer = timerRandomize * 4;
         getAttributes().setKnockback(100);
     }
-
+    // Zombie Behavior
+    // - Approach the player slowly
+    // - Once within a close range, the zombie will be able to lunge at the player
+    // - Attacks from a lunging zombie will deal slightly more damage and knockback
     public void tick(float dt) {
         target = Game.getWindow().getPlayer();
         boolean inRange = target.getPosition().distance(getPosition()) < 300;

@@ -6,12 +6,15 @@ public class BomberEntity extends LivingEntity {
     public BomberEntity(Vector2 position)
     {
         super(position,new Vector2(12,12),new SpritesheetRenderer("bomber",4,1,new SpriteAnimation[]{
-                new SpriteAnimation(0,1,6,true),
+                new SpriteAnimation(0,2,6,true),
                 new SpriteAnimation(2,3,12,true)
         }),new EntityAttributes(150,125,25));
         friction = 0;
     }
-
+    // Bomber behavior
+    // - Walk towards the player
+    // - Once in range, a timer will start
+    // - Once the timer reaches 0, the bomber will explode and deal massive damage
     public void tick(float dt) {
         target = Game.getWindow().getPlayer();
         boolean inRange = target.getPosition().distance(getPosition()) < 300;
@@ -30,6 +33,7 @@ public class BomberEntity extends LivingEntity {
             if(!inRange) movement.set(new Vector2());
             setVelocity(getVelocity().movedTowards(movement,dt*200));
             spritesheet.playAnimation(1);
+            // blow up
             if (explosionTimer > 0.5f)
             {
                 ExplosionEffect explosion = new ExplosionEffect(getPosition());

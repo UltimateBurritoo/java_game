@@ -10,7 +10,7 @@ public class ChestEntity extends EntityBase{
     public static InventoryItem getRandomLoot()
     {
         int itemIndex = (int)(Math.random() * 8); // numbers represents total number of entries into loot table
-        //System.out.println(itemIndex);
+        // selects a random entry from this switch statement
         InventoryItem result;
         switch (itemIndex)
         {

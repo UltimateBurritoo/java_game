@@ -16,10 +16,17 @@ public class GhostEntity extends LivingEntity{
         attackRandom = (float)Math.random();
     }
     float attackRandom;
+
+    // Ghost Behavior:
+    // - Circle around the player, keeping distance between the player
+    // - At random intervals, go into attack mode
+    // - During attack mode, move quickly towards the player and deal damage
+
     public void tick(float dt) {
         target = Game.getWindow().getPlayer();
         spritesheet.setFlipped(target.getPosition().getX() > getPosition().getX());
         boolean inRange = target.getPosition().distance(getPosition()) < 450;
+        // attack mode
         if(attackTimer > 5*attackRandom)
         {
             attackTimer += dt;
@@ -34,6 +41,7 @@ public class GhostEntity extends LivingEntity{
                 attackTimer = 0;
             }
         }
+        // circle mode
         else if (inRange)
         {
             spritesheet.playAnimation(0);

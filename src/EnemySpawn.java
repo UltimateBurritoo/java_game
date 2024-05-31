@@ -1,4 +1,5 @@
 public class EnemySpawn {
+    // This class contains methods meant to help with the spawning of enemies using a weighted random system
     public enum EntityType
     {
         ZOMBIE,
@@ -17,6 +18,7 @@ public class EnemySpawn {
         }
         GameWindow.queueSpawn(new PoofEffect(position));
     }
+    // Equations to get the spawn weight of various enemies per level
     public static float getSpawnWeight(EntityType entityType, int level)
     {
         switch (entityType)
@@ -37,6 +39,7 @@ public class EnemySpawn {
         }
         return t;
     }
+    // Gets an entity type based off of the weights of the current level
     public static EntityType rollForWeight(int level, float totalWeight)
     {
         float s = (float)Math.random() * totalWeight;
@@ -47,6 +50,7 @@ public class EnemySpawn {
         }
         return EntityType.ZOMBIE;
     }
+    // Spawns several enemies around and area
     public static void spawnGroup(int level, int count, Vector2 center, float distance)
     {
         float totalWeight = getTotalWeight(level);
@@ -55,6 +59,7 @@ public class EnemySpawn {
                     // comically long vector math to decide where to spawn the enemy
                     center.added(new Vector2((float)Math.random()*2-1,(float)Math.random()*2-1).multiplied(distance)));
         }
+        // 60% chance to spawn a chest
         if(Math.random() < 0.6f)
         {
             GameWindow.queueSpawn(new ChestEntity(center.added(new Vector2((float)Math.random()*2-1,(float)Math.random()*2-1).multiplied(distance))));
